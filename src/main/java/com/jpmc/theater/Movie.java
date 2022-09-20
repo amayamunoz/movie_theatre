@@ -48,7 +48,7 @@ public class Movie {
 
         if (showStart.isAfter(firstCutoff.minusMinutes(1)) && 
                 showStart.isBefore(secondCutoff.plusMinutes(1))) {
-                    percentDiscount = ticketPrice * 0.25; // 25% discount if show time in between 11 and 4
+            percentDiscount = ticketPrice * 0.25; // 25% discount if show time in between 11 and 4
         }
 
         if (showStartTime.getDayOfMonth() == 7) {
