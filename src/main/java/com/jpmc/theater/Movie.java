@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.util.Objects;
 
 public class Movie {
-    private static int MOVIE_CODE_SPECIAL = 1;
+    final private static int MOVIE_CODE_SPECIAL = 1;
     final private static LocalTime firstCutoff = LocalTime.parse("11:00:00");
     final private static LocalTime secondCutoff = LocalTime.parse("16:00:00");
 
@@ -39,25 +39,22 @@ public class Movie {
         return ticketPrice - getDiscount(showing.getSequenceOfTheDay(), showing.getStartTime());
     }
 
-    //TODO fix this, need to cleanup
     private double getDiscount(int showSequence, LocalDateTime showStartTime) {
         LocalTime showStart = showStartTime.toLocalTime();
-        double specialDiscount = 0;
-        double dayDiscount = 0;
+        double percentDiscount = 0, dayDiscount = 0, sequenceDiscount = 0;
         if (MOVIE_CODE_SPECIAL == specialCode) {
-            specialDiscount = ticketPrice * 0.2;  // 20% discount for special movie
+            percentDiscount = ticketPrice * 0.2;  // 20% discount for special movie
         }
 
         if (showStart.isAfter(firstCutoff.minusMinutes(1)) && 
                 showStart.isBefore(secondCutoff.plusMinutes(1))) {
-            specialDiscount = ticketPrice * 0.25;
+                    percentDiscount = ticketPrice * 0.25; // 25% discount if show time in between 11 and 4
         }
 
         if (showStartTime.getDayOfMonth() == 7) {
-            dayDiscount = 1;
+            dayDiscount = 1; // $1 discount if the 7th of the month
         }
 
-        double sequenceDiscount = 0;
         if (showSequence == 1) {
             sequenceDiscount = 3; // $3 discount for 1st show
         } else if (showSequence == 2) {
@@ -65,9 +62,9 @@ public class Movie {
         }
 
         // biggest discount wins
-        if (specialDiscount > sequenceDiscount) {
-            if (specialDiscount > dayDiscount) {
-                return specialDiscount;
+        if (percentDiscount > sequenceDiscount) {
+            if (percentDiscount > dayDiscount) {
+                return percentDiscount;
             } else {
                 return dayDiscount;
             }
