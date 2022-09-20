@@ -1,10 +1,15 @@
 package com.jpmc.theater;
 
+import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Theater {
 
@@ -41,16 +46,34 @@ public class Theater {
         return new Reservation(customer, showing, howManyTickets);
     }
 
-    public void printSchedule() {
-        System.out.println(provider.currentDate());
-        System.out.println("===================================================");
-        schedule.forEach(s ->
-                System.out.println(s.getSequenceOfTheDay() + ": " + s.getStartTime() + " " + s.getMovie().getTitle() + " " + humanReadableFormat(s.getMovie().getRunningTime()) + " $" + s.getMovieFee())
-        );
-        System.out.println("===================================================");
+    public String printScheduleJson() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schedule);
+            System.out.println(jsonString);
+            return jsonString;
+        }
+        catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
-    public String humanReadableFormat(Duration duration) {
+    public String printSchedule() {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("h:mm a");
+        NumberFormat numberFormatter = NumberFormat.getCurrencyInstance();
+        StringBuilder str = new StringBuilder();
+        str.append(provider.currentDate() + "\n");
+        str.append("===================================================\n");
+        schedule.forEach(s ->
+            str.append(s.getSequenceOfTheDay() + ": " + s.getStartTime().format(dateFormatter) + " " + s.getMovie().getTitle() + " " + humanReadableFormat(s.getMovie().getRunningTime()) + " " + numberFormatter.format(s.getMovieFee()) + "\n")
+        );
+        str.append("===================================================");
+        System.out.println(str.toString());
+        return str.toString();
+    }
+
+    private String humanReadableFormat(Duration duration) {
         long hour = duration.toHours();
         long remainingMin = duration.toMinutes() - TimeUnit.HOURS.toMinutes(duration.toHours());
 
