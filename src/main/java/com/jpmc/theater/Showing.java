@@ -17,12 +17,8 @@ public class Showing {
         return movie;
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalDateTime getShowStartTime() {
         return showStartTime;
-    }
-
-    public boolean isSequence(int sequence) {
-        return this.sequenceOfTheDay == sequence;
     }
 
     public double getMovieFee() {

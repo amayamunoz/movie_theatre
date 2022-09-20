@@ -36,7 +36,7 @@ public class Movie {
     }
 
     public double calculateTicketPrice(Showing showing) {
-        return ticketPrice - getDiscount(showing.getSequenceOfTheDay(), showing.getStartTime());
+        return ticketPrice - getDiscount(showing.getSequenceOfTheDay(), showing.getShowStartTime());
     }
 
     private double getDiscount(int showSequence, LocalDateTime showStartTime) {

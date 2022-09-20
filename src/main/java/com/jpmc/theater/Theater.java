@@ -27,7 +27,7 @@ public class Theater {
             showing = schedule.get(sequence - 1);
         } catch (RuntimeException ex) {
             ex.printStackTrace();
-            throw new IllegalStateException("not able to find any showing for given sequence " + sequence);
+            throw new IllegalStateException("Not able to find showing for given sequence " + sequence);
         }
         return new Reservation(showing, howManyTickets);
     }
@@ -35,9 +35,9 @@ public class Theater {
     public String printScheduleJson() {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schedule);
-            System.out.println(jsonString);
-            return jsonString;
+            objectMapper.findAndRegisterModules();
+            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schedule));
+            return objectMapper.writeValueAsString(schedule);
         }
         catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -52,7 +52,7 @@ public class Theater {
         str.append(provider.currentDate() + "\n");
         str.append("===================================================\n");
         schedule.forEach(s ->
-            str.append(s.getSequenceOfTheDay() + ": " + s.getStartTime().format(dateFormatter) + " " + s.getMovie().getTitle() + " " + humanReadableDurationString(s.getMovie().getRunningTime()) + " " + numberFormatter.format(s.getMovieFee()) + "\n")
+            str.append(s.getSequenceOfTheDay() + ": " + s.getShowStartTime().format(dateFormatter) + " " + s.getMovie().getTitle() + " " + humanReadableDurationString(s.getMovie().getRunningTime()) + " " + numberFormatter.format(s.getMovieFee()) + "\n")
         );
         str.append("===================================================");
         System.out.println(str.toString());
@@ -66,13 +66,11 @@ public class Theater {
         return String.format("(%s hour%s %s minute%s)", hour, handlePlural(hour), remainingMin, handlePlural(remainingMin));
     }
 
-    // TODO add test for this
     // (s) postfix should be added to handle plural correctly
     private String handlePlural(long value) {
         if (value == 1) {
             return "";
-        }
-        else {
+        } else {
             return "s";
         }
     }
