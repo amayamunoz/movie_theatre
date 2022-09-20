@@ -1,10 +1,14 @@
 package com.jpmc.theater;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 
 public class Movie {
     private static int MOVIE_CODE_SPECIAL = 1;
+    final private static LocalTime firstCutoff = LocalTime.parse("11:00:00");
+    final private static LocalTime secondCutoff = LocalTime.parse("16:00:00");
 
     private String title;
     private String description;
@@ -32,28 +36,46 @@ public class Movie {
     }
 
     public double calculateTicketPrice(Showing showing) {
-        return ticketPrice - getDiscount(showing.getSequenceOfTheDay());
+        return ticketPrice - getDiscount(showing.getSequenceOfTheDay(), showing.getStartTime());
     }
 
-    private double getDiscount(int showSequence) {
+    private double getDiscount(int showSequence, LocalDateTime showStartTime) {
+        LocalTime showStart = showStartTime.toLocalTime();
         double specialDiscount = 0;
+        double dayDiscount = 0;
         if (MOVIE_CODE_SPECIAL == specialCode) {
             specialDiscount = ticketPrice * 0.2;  // 20% discount for special movie
+        }
+
+        if (showStart.isAfter(firstCutoff) && showStart.isBefore(secondCutoff)) {
+            specialDiscount = ticketPrice * 0.25;
+        }
+
+        if (showStartTime.getDayOfMonth() == 7) {
+            dayDiscount = 1;
         }
 
         double sequenceDiscount = 0;
         if (showSequence == 1) {
             sequenceDiscount = 3; // $3 discount for 1st show
         } else if (showSequence == 2) {
-
             sequenceDiscount = 2; // $2 discount for 2nd show
         }
-//        else {
-//            throw new IllegalArgumentException("failed exception");
-//        }
 
         // biggest discount wins
-        return specialDiscount > sequenceDiscount ? specialDiscount : sequenceDiscount;
+        if (specialDiscount > sequenceDiscount) {
+            if (specialDiscount > dayDiscount) {
+                return specialDiscount;
+            } else {
+                return dayDiscount;
+            }
+        } else {
+            if (sequenceDiscount > dayDiscount) {
+                return sequenceDiscount;
+            } else {
+                return dayDiscount;
+            }
+        }
     }
 
     @Override
