@@ -39,6 +39,7 @@ public class Movie {
         return ticketPrice - getDiscount(showing.getSequenceOfTheDay(), showing.getStartTime());
     }
 
+    //TODO fix this, need to cleanup
     private double getDiscount(int showSequence, LocalDateTime showStartTime) {
         LocalTime showStart = showStartTime.toLocalTime();
         double specialDiscount = 0;
@@ -47,7 +48,8 @@ public class Movie {
             specialDiscount = ticketPrice * 0.2;  // 20% discount for special movie
         }
 
-        if (showStart.isAfter(firstCutoff) && showStart.isBefore(secondCutoff)) {
+        if (showStart.isAfter(firstCutoff.minusMinutes(1)) && 
+                showStart.isBefore(secondCutoff.plusMinutes(1))) {
             specialDiscount = ticketPrice * 0.25;
         }
 

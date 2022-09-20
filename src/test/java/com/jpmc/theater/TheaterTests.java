@@ -8,8 +8,7 @@ public class TheaterTests {
     @Test
     void totalFeeForCustomer() {
         Theater theater = new Theater(LocalDateProvider.singleton());
-        Customer john = new Customer("John Doe", "id-12345");
-        Reservation reservation = theater.reserve(john, 3, 4);
+        Reservation reservation = theater.reserve(3, 4);
         assertEquals(27, reservation.totalFee());
     }
 
