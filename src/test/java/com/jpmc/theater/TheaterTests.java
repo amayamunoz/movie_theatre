@@ -9,8 +9,8 @@ public class TheaterTests {
     void totalFeeForCustomer() {
         Theater theater = new Theater(LocalDateProvider.singleton());
         Customer john = new Customer("John Doe", "id-12345");
-        Reservation reservation = theater.reserve(john, 2, 4);
-        assertEquals(reservation.totalFee(), 50);
+        Reservation reservation = theater.reserve(john, 3, 4);
+        assertEquals(27, reservation.totalFee());
     }
 
     @Test
